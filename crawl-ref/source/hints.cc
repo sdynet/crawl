@@ -817,11 +817,9 @@ static bool _advise_use_wand()
         switch (obj.sub_type)
         {
         case WAND_FLAME:
-        case WAND_PARALYSIS:
         case WAND_ICEBLAST:
         case WAND_ENSLAVEMENT:
         case WAND_ACID:
-        case WAND_RANDOM_EFFECTS:
         case WAND_DISINTEGRATION:
             return true;
         }

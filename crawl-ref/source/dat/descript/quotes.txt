@@ -3129,15 +3129,7 @@ wand of iceblast
 
 <wand>
 %%%%
-wand of paralysis
-
-<wand>
-%%%%
 wand of polymorph
-
-<wand>
-%%%%
-wand of random effects
 
 <wand>
 %%%%
