@@ -1346,25 +1346,32 @@ static void _summon_bee(int power)
 
 static void _summon_rangers(int power)
 {
-    const int power_level = _get_power_level(power);
-    const monster_type dctr = MONS_CENTAUR_WARRIOR,
-                       dctr2 = MONS_NAGA_SHARPSHOOTER,
-                       dctr3 = MONS_DEEP_ELF_MASTER_ARCHER;
+    int num_centaur_warrior = 1 + x_chance_in_y(power, 200);
+    int num_sharpshooter = random2(power) > 120 ? 2 : random2(power) > 80 ? 1 : 0;
+    int num_master_archer = random2(power) > 160 ? 1 : 0;
 
-    const monster_type base_choice = power_level == 2 ? dctr2 :
-                                                        dctr;
-    monster_type placed_choice  = power_level == 2 ? dctr3 :
-                                  power_level == 1 ? dctr2 :
-                                                     dctr;
-    const bool extra_monster = coinflip();
+    if (num_master_archer == 0)
+        num_centaur_warrior++;
 
-    if (!extra_monster && power_level > 0)
-        placed_choice = power_level == 2 ? dctr3 : dctr2;
+    int count = 0;
 
-    for (int i = 0; i < 1 + extra_monster; ++i)
-        _friendly(base_choice, 5 - power_level);
+    while (num_centaur_warrior-- > 0)
+    {
+        _friendly(MONS_CENTAUR_WARRIOR, 3);
+    }
 
-    _friendly(placed_choice, 5 - power_level);
+    while (num_sharpshooter-- > 0)
+    {
+        _friendly(MONS_NAGA_SHARPSHOOTER, 3);
+    }
+
+    while (num_master_archer-- > 0)
+    {
+        _friendly(MONS_DEEP_ELF_MASTER_ARCHER, 3);
+    }
+
+    if (!count)
+        canned_msg(MSG_NOTHING_HAPPENS);
 }
 
 static void _cloud_card(int power)
@@ -1585,6 +1592,20 @@ static void _torment_card()
         torment_player(&you, TORMENT_CARDS);
 }
 
+// Max power = 100 + 100 = 200
+// Min power = 19 + 0 = 19
+static int _new_card_power(bool punishment)
+{
+    if (punishment)
+        return you.experience_level * 18;
+
+    int result = you.piety;
+    result += you.skill(SK_INVOCATIONS) * 3 + 19;
+    result += (you.piety / 2);
+
+    return result;
+}
+
 // Punishment cards don't have their power adjusted depending on Nemelex piety,
 // and are based on experience level instead of invocations skill.
 // Max power = 200 * (2700+2500) / 2700 + 243 + 300 = 928
@@ -1609,6 +1630,7 @@ void card_effect(card_type which_card,
 {
     const char *participle = dealt ? "dealt" : "drawn";
     const int power = _card_power(punishment);
+    const int power2 = _new_card_power(punishment);
 
     dprf("Card power: %d", power);
 
@@ -1633,7 +1655,7 @@ void card_effect(card_type which_card,
     case CARD_WRATH:            _godly_wrath(); break;
     case CARD_SUMMON_DEMON:     _summon_demon_card(power); break;
     case CARD_ELEMENTS:         _elements_card(power); break;
-    case CARD_RANGERS:          _summon_rangers(power); break;
+    case CARD_RANGERS:          _summon_rangers(power2); break;
     case CARD_SUMMON_WEAPON:    _summon_dancing_weapon(power); break;
     case CARD_SUMMON_BEE:       _summon_bee(power); break;
     case CARD_TORMENT:          _torment_card(); break;
