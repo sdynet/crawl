@@ -4132,15 +4132,16 @@ string god_spell_warn_string(spell_type spell, god_type god)
 
 bool god_protects_from_harm()
 {
+    const int strengh = min((int)you.piety, piety_breakpoint(5));
     if ((have_passive(passive_t::protect_from_harm)
          || have_passive(passive_t::lifesaving))
-        && (one_chance_in(10) || x_chance_in_y(you.piety, 1000)))
+        && (one_chance_in(10) || x_chance_in_y(strengh, 800)))
     {
         return true;
     }
 
     if (!you.gift_timeout && have_passive(passive_t::lifesaving)
-        && x_chance_in_y(you.piety, 160))
+        && x_chance_in_y(strengh, 160))
     {
         _inc_gift_timeout(20 + random2avg(10, 2));
         return true;
