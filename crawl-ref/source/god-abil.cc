@@ -737,7 +737,8 @@ int zin_recite_power()
     const int power_mult = 10;
     const int invo_power = you.skill_rdiv(SK_INVOCATIONS, power_mult)
                            + 3 * power_mult;
-    const int piety_power = you.piety * 3 / 2;
+    const int strengh = min((int)you.piety, piety_breakpoint(5));
+    const int piety_power = strengh * 15 / 8;
     return (invo_power + piety_power) / 2 / power_mult;
 }
 
