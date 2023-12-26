@@ -485,9 +485,10 @@ static void _gauntlet_effect()
 static void _hell_effects()
 {
 
+    const int strengh = min((int)you.piety, piety_breakpoint(5));
     // 50% chance at max piety
     if (have_passive(passive_t::resist_hell_effects)
-        && x_chance_in_y(you.piety, MAX_PIETY * 2) || is_sanctuary(you.pos()))
+        && x_chance_in_y(strengh, piety_breakpoint(5) * 2) || is_sanctuary(you.pos()))
     {
         simple_god_message("'s power protects you from the chaos of Hell!");
         return;
